@@ -418,14 +418,15 @@ const showNotification = (type, message) => {
 
 <style scoped>
 .insights-panel {
-  background: var(--card-bg);
+  background: rgba(200, 184, 224, 0.9);
+  backdrop-filter: blur(15px);
   border-radius: 16px;
   border: 4px solid var(--card-border);
-  height: 600px;
+  min-height: 600px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-  font-family: serif;
+  font-family: inherit;
   position: relative;
 }
 
@@ -453,8 +454,9 @@ const showNotification = (type, message) => {
 }
 
 .insights-count {
-  color: var(--accent-gray);
+  color: var(--ui-text-primary);
   font-size: 0.9em;
+  font-weight: 600;
 }
 
 .export-buttons {
@@ -465,17 +467,19 @@ const showNotification = (type, message) => {
 .export-btn {
   padding: 6px 12px;
   background: var(--success-green);
-  color: var(--primary-black);
+  color: #000000;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.8em;
-  font-weight: 500;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .export-btn:hover {
   background: var(--warning-yellow);
+  color: #000000;
   transform: translateY(-1px);
 }
 
@@ -492,7 +496,8 @@ const showNotification = (type, message) => {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+  background: rgba(184, 168, 208, 0.4);
+  backdrop-filter: blur(8px);
   border-radius: 0 0 12px 12px;
 }
 
@@ -578,7 +583,7 @@ const showNotification = (type, message) => {
 /* 响应式设计 */
 @media (max-width: 768px) {
   .insights-panel {
-    height: 500px;
+    min-height: 500px;
   }
   
   .insights-header {

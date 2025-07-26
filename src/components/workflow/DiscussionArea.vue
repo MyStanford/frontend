@@ -1,7 +1,7 @@
 <template>
   <div class="discussion-area">
     <div class="discussion-header">
-      <h4>💭 思维导图讨论</h4>
+      <h4>💭 Discuss</h4>
       <div class="discussion-status" :class="{ active: isDiscussing }">
         {{ discussionStatusText }}
       </div>
@@ -20,10 +20,6 @@
           <div class="empty-topic">
             💭
           </div>
-          <div class="empty-text">
-            选择传奇专家团队，输入讨论主题<br>
-            让历史名人为您献策~
-          </div>
         </div>
       </div>
       
@@ -40,22 +36,24 @@
               </feMerge>
             </filter>
           </defs>
-          <g v-for="(message, index) in discussionHistory" :key="`line-${message.messageId}`">
+          <g v-for="(message, messageIdx) in discussionHistory" :key="`line-${message.messageId}`">
             <path 
-              :d="getConnectionPath(index, discussionHistory.length)"
+              :d="getTreeConnectionPath(getExpertIndex(message.expert), getMessageIndex(message), Object.keys(organizeMessagesAsTree()).length)"
               class="connection-line"
               :class="{ 
                 'line-thinking': isExpertThinking(message.expert),
-                'line-complete': !isExpertThinking(message.expert)
+                'line-complete': !isExpertThinking(message.expert),
+                'line-first-round': getMessageIndex(message) === 0,
+                'line-follow-up': getMessageIndex(message) > 0
               }"
               filter="url(#glow)"
             />
           </g>
         </svg>
         
-        <!-- 中心主题节点 -->
+        <!-- 中心主题节点 - 树状布局时在顶部 -->
         <div 
-          class="mindmap-center" 
+          class="mindmap-center tree-layout" 
           :class="{ 
             thinking: isDiscussing,
             minimized: centerMinimized 
@@ -76,23 +74,28 @@
           </div>
         </div>
         
-        <!-- 专家节点 -->
+        <!-- 专家节点 - 树状布局 -->
         <div 
           v-for="(message, index) in discussionHistory" 
           :key="message.messageId"
-          class="expert-node"
+          class="expert-node tree-node"
           :class="{ 
             'node-thinking': isExpertThinking(message.expert),
             'node-complete': !isExpertThinking(message.expert),
-            'node-interactive': !isExpertThinking(message.expert)
+            'node-interactive': !isExpertThinking(message.expert),
+            'node-first-round': getMessageIndex(message) === 0,
+            'node-follow-up': getMessageIndex(message) > 0
           }"
-                     :style="getNodePosition(index, discussionHistory.length)"
-           @click="showExpertDetail(message)"
+          :style="getTreeNodePosition(getExpertIndex(message.expert), getMessageIndex(message), Object.keys(organizeMessagesAsTree()).length, organizeMessagesAsTree()[message.expert]?.length || 1)"
+          @click="showExpertDetail(message)"
         >
           <!-- 专家头像和名称 -->
           <div class="node-header">
             <div class="node-avatar">{{ getExpertAvatar(message.expert) }}</div>
-            <div class="node-name">{{ message.expert }}</div>
+            <div class="node-info">
+              <div class="node-name">{{ message.expert }}</div>
+              <div class="node-round">第{{ getMessageIndex(message) + 1 }}轮</div>
+            </div>
           </div>
           
           <!-- 思考状态 -->
@@ -205,9 +208,7 @@
         </button>
       </div>
       
-      <div class="control-help">
-        💡 拖拽移动 | 滚轮缩放 | 点击中心可最小化 | 点击节点查看详情
-      </div>
+      
     </div>
     
     <!-- 专家详情弹窗 -->
@@ -370,44 +371,113 @@ const clearDiscussion = () => {
   centerMinimized.value = false // 重置中心节点状态
 }
 
-// 思维导图相关方法
-const getNodePosition = (index, total) => {
-  const angle = (index * 360 / total) * Math.PI / 180
-  const radius = 250 // 增加半径，让专家节点远离中心
-  const centerX = 400
-  const centerY = 300
+// 树状思维导图相关方法
+
+// 组织消息为树状结构
+const organizeMessagesAsTree = () => {
+  const expertGroups = {}
   
-  const x = centerX + radius * Math.cos(angle)
-  const y = centerY + radius * Math.sin(angle)
+  // 按专家分组消息
+  discussionHistory.value.forEach(message => {
+    if (!expertGroups[message.expert]) {
+      expertGroups[message.expert] = []
+    }
+    expertGroups[message.expert].push(message)
+  })
   
-  return {
-    position: 'absolute',
-    left: `${x - 100}px`, // 节点宽度的一半
-    top: `${y - 75}px`    // 节点高度的一半
+  // 按时间戳排序每个专家的消息
+  Object.keys(expertGroups).forEach(expert => {
+    expertGroups[expert].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+  })
+  
+  return expertGroups
+}
+
+// 获取树状节点位置
+const getTreeNodePosition = (expertIndex, messageIndex, totalExperts, totalMessagesForExpert) => {
+  const containerWidth = 800
+  const containerHeight = 600
+  const centerX = containerWidth / 2
+  const centerY = 100 // 主题在顶部
+  
+  if (messageIndex === 0) {
+    // 第一轮消息：水平分布在第二层
+    const expertSpacing = Math.min(200, (containerWidth - 100) / Math.max(totalExperts, 1))
+    const startX = centerX - ((totalExperts - 1) * expertSpacing) / 2
+    const x = startX + expertIndex * expertSpacing
+    const y = centerY + 150 // 第一层距离主题150px
+    
+    return {
+      position: 'absolute',
+      left: `${x - 100}px`,
+      top: `${y - 75}px`
+    }
+  } else {
+    // 后续轮次：垂直排列在对应专家下方
+    const expertSpacing = Math.min(200, (containerWidth - 100) / Math.max(totalExperts, 1))
+    const startX = centerX - ((totalExperts - 1) * expertSpacing) / 2
+    const x = startX + expertIndex * expertSpacing
+    const y = centerY + 150 + messageIndex * 130 // 每轮间距130px
+    
+    return {
+      position: 'absolute',
+      left: `${x - 100}px`,
+      top: `${y - 75}px`
+    }
   }
 }
 
-const getConnectionPath = (index, total) => {
-  const angle = (index * 360 / total) * Math.PI / 180
-  const radius = 250 // 与getNodePosition保持一致
-  const centerX = 400
-  const centerY = 300
+// 获取树状连接路径
+const getTreeConnectionPath = (expertIndex, messageIndex, totalExperts) => {
+  const containerWidth = 800
+  const containerHeight = 600
+  const centerX = containerWidth / 2
+  const centerY = 100
   
-  const nodeX = centerX + radius * Math.cos(angle)
-  const nodeY = centerY + radius * Math.sin(angle)
-  
-  // 从中心圆圈边缘开始连接，而不是从圆心
   const isMobile = window.innerWidth <= 768
   let centerRadius = centerMinimized.value ? (isMobile ? 25 : 30) : (isMobile ? 50 : 70)
-  const startX = centerX + centerRadius * Math.cos(angle)
-  const startY = centerY + centerRadius * Math.sin(angle)
   
-  // 贝塞尔曲线，从中心边缘到节点
-  const controlDistance = (radius - centerRadius) * 0.4
-  const controlX = startX + controlDistance * Math.cos(angle)
-  const controlY = startY + controlDistance * Math.sin(angle)
-  
-  return `M ${startX} ${startY} Q ${controlX} ${controlY} ${nodeX} ${nodeY}`
+  if (messageIndex === 0) {
+    // 从主题连接到第一轮消息
+    const expertSpacing = Math.min(200, (containerWidth - 100) / Math.max(totalExperts, 1))
+    const startX = centerX - ((totalExperts - 1) * expertSpacing) / 2
+    const endX = startX + expertIndex * expertSpacing
+    const endY = centerY + 150
+    
+    // 从中心节点底部连出
+    const startXPos = centerX
+    const startYPos = centerY + centerRadius
+    
+    // 贝塞尔曲线连接
+    const controlY = centerY + 75
+    
+    return `M ${startXPos} ${startYPos} Q ${startXPos} ${controlY} ${endX} ${endY}`
+  } else {
+    // 从前一轮消息连接到当前轮次
+    const expertSpacing = Math.min(200, (containerWidth - 100) / Math.max(totalExperts, 1))
+    const startX = centerX - ((totalExperts - 1) * expertSpacing) / 2
+    const x = startX + expertIndex * expertSpacing
+    
+    const startY = centerY + 150 + (messageIndex - 1) * 130 + 75 // 前一个节点底部
+    const endY = centerY + 150 + messageIndex * 130 - 75 // 当前节点顶部
+    
+    // 直线连接
+    return `M ${x} ${startY} L ${x} ${endY}`
+  }
+}
+
+// 获取专家在树中的索引
+const getExpertIndex = (expertName) => {
+  const expertGroups = organizeMessagesAsTree()
+  const expertNames = Object.keys(expertGroups).sort()
+  return expertNames.indexOf(expertName)
+}
+
+// 获取消息在专家组中的索引
+const getMessageIndex = (message) => {
+  const expertGroups = organizeMessagesAsTree()
+  const expertMessages = expertGroups[message.expert] || []
+  return expertMessages.findIndex(msg => msg.messageId === message.messageId)
 }
 
 const getExpertAvatar = (expertName) => {
@@ -420,11 +490,24 @@ const isExpertThinking = (expertName) => {
 }
 
 const getThinkingNodePosition = (expertName) => {
-  // 为思考中的专家分配临时位置
-  const thinkingIndex = thinkingMessages.value.findIndex(t => t.expertName === expertName)
-  const totalThinking = thinkingMessages.value.length
+  // 为思考中的专家分配临时位置 - 树状布局
+  const expertGroups = organizeMessagesAsTree()
+  const expertNames = Object.keys(expertGroups).sort()
+  const expertIndex = expertNames.indexOf(expertName)
+  const totalExperts = expertNames.length
   
-  return getNodePosition(thinkingIndex, Math.max(totalThinking, 3))
+  // 如果找不到专家，分配一个临时索引
+  if (expertIndex === -1) {
+    const thinkingIndex = thinkingMessages.value.findIndex(t => t.expertName === expertName)
+    const tempIndex = totalExperts + thinkingIndex
+    return getTreeNodePosition(tempIndex, 0, totalExperts + thinkingMessages.value.length, 1)
+  }
+  
+  // 计算该专家的下一轮位置
+  const expertMessages = expertGroups[expertName] || []
+  const nextRound = expertMessages.length
+  
+  return getTreeNodePosition(expertIndex, nextRound, totalExperts, nextRound + 1)
 }
 
 const selectNode = (messageId) => {
@@ -751,16 +834,20 @@ const centerView = () => {
 const fitToView = () => {
   if (discussionHistory.value.length === 0) return
   
-  // 根据专家数量调整缩放比例
-  const expertCount = discussionHistory.value.length
+  // 对于树状布局，根据专家数量和轮次调整缩放比例
+  const expertGroups = organizeMessagesAsTree()
+  const expertCount = Object.keys(expertGroups).length
+  const maxRounds = Math.max(...Object.values(expertGroups).map(msgs => msgs.length))
+  
   let targetScale = 1
   
-  if (expertCount > 6) {
+  // 根据专家数量和最大轮次数调整缩放
+  if (expertCount > 5 || maxRounds > 3) {
+    targetScale = 0.6
+  } else if (expertCount > 3 || maxRounds > 2) {
     targetScale = 0.7
-  } else if (expertCount > 4) {
+  } else if (expertCount > 2 || maxRounds > 1) {
     targetScale = 0.8
-  } else if (expertCount > 2) {
-    targetScale = 0.9
   }
   
   zoomState.value.scale = Math.max(zoomState.value.minScale, Math.min(zoomState.value.maxScale, targetScale))
@@ -913,14 +1000,15 @@ const handleKeyboard = (event) => {
 
 <style scoped>
 .discussion-area {
-  background: var(--card-bg);
+  background: rgba(200, 184, 224, 0.9);
+  backdrop-filter: blur(15px);
   border-radius: 16px;
   border: 4px solid var(--card-border);
-  height: 600px;
+  min-height: 600px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-  font-family: serif;
+  font-family: inherit;
   position: relative;
 }
 
@@ -963,9 +1051,11 @@ const handleKeyboard = (event) => {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+  background: rgba(45, 45, 77, 0.3);
+  backdrop-filter: blur(5px);
   cursor: grab;
   user-select: none;
+  min-height: 500px; /* 确保树状布局有足够空间 */
 }
 
 .mindmap-container:active {
@@ -1036,13 +1126,26 @@ const handleKeyboard = (event) => {
   opacity: 1;
 }
 
+/* 树状布局连接线样式 */
+.connection-line.line-first-round {
+  stroke: var(--success-green);
+  stroke-width: 3;
+  opacity: 1;
+}
+
+.connection-line.line-follow-up {
+  stroke: var(--warning-yellow);
+  stroke-width: 2;
+  opacity: 0.8;
+}
+
 @keyframes dashMove {
   to {
     stroke-dashoffset: -10;
   }
 }
 
-/* 中心主题节点 */
+/* 中心主题节点 - 树状布局 */
 .mindmap-center {
   position: absolute;
   left: 50%;
@@ -1062,6 +1165,12 @@ const handleKeyboard = (event) => {
   transition: all 0.5s ease;
   z-index: 1;
   opacity: 0.95;
+}
+
+/* 树状布局的中心节点位于顶部 */
+.mindmap-center.tree-layout {
+  top: 100px;
+  transform: translate(-50%, 0);
 }
 
 .mindmap-center.thinking {
@@ -1164,6 +1273,28 @@ const handleKeyboard = (event) => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* 树状布局的专家节点 */
+.expert-node.tree-node {
+  width: 180px;
+  min-height: 120px;
+  padding: 12px;
+}
+
+/* 第一轮对话节点 */
+.expert-node.node-first-round {
+  border-color: var(--success-green);
+  background: linear-gradient(135deg, var(--secondary-black), var(--tertiary-black));
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+}
+
+/* 后续轮次节点 */
+.expert-node.node-follow-up {
+  border-color: var(--warning-yellow);
+  background: linear-gradient(135deg, var(--tertiary-black), var(--secondary-black));
+  box-shadow: 0 4px 12px rgba(255, 237, 78, 0.2);
+  opacity: 0.9;
+}
+
 .expert-node:hover {
   transform: translateY(-5px) scale(1.02);
   box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
@@ -1210,10 +1341,20 @@ const handleKeyboard = (event) => {
   color: var(--primary-black);
 }
 
+.node-info {
+  flex: 1;
+}
+
 .node-name {
   color: var(--primary-white);
   font-weight: 600;
   font-size: 0.9em;
+}
+
+.node-round {
+  color: var(--accent-gray);
+  font-size: 0.75em;
+  margin-top: 2px;
 }
 
 /* 思考内容 */
@@ -1389,25 +1530,30 @@ const handleKeyboard = (event) => {
 
 .control-btn {
   padding: 6px 12px;
-  background: transparent;
-  color: var(--accent-gray);
-  border: 1px solid var(--accent-gray);
+  background: var(--ui-bg-secondary);
+  color: var(--ui-text-primary);
+  border: 1px solid var(--ui-border-dark);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.8em;
+  font-weight: 600;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .control-btn:hover {
-  background: var(--accent-gray);
-  color: var(--primary-white);
+  background: var(--ui-bg-tertiary);
+  color: var(--ui-text-primary);
+  border-color: var(--ui-border-accent);
   transform: translateY(-1px);
 }
 
 .clear-btn {
   border-color: #ff6b6b;
   color: #ff6b6b;
+  background: var(--ui-bg-secondary);
+  font-weight: 600;
 }
 
 .clear-btn:hover {
@@ -1471,6 +1617,12 @@ const handleKeyboard = (event) => {
   flex: 1;
   text-align: center;
   padding: 0 10px;
+}
+
+.tree-stats {
+  color: var(--success-green);
+  font-weight: 500;
+  font-style: normal;
 }
 
 @keyframes slideInUp {
@@ -1804,12 +1956,16 @@ const handleKeyboard = (event) => {
 /* 响应式设计 */
 @media (max-width: 768px) {
   .discussion-area {
-    height: 500px;
+    min-height: 500px;
   }
   
   .mindmap-center {
     width: 100px;
     height: 100px;
+  }
+  
+  .mindmap-center.tree-layout {
+    top: 80px;
   }
   
   .mindmap-center.minimized {
@@ -1829,6 +1985,12 @@ const handleKeyboard = (event) => {
     width: 160px;
     min-height: 120px;
     padding: 12px;
+  }
+  
+  .expert-node.tree-node {
+    width: 140px;
+    min-height: 100px;
+    padding: 10px;
   }
   
   .node-avatar {

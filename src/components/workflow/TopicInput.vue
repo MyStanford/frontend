@@ -1,6 +1,6 @@
 <template>
   <div class="topic-input-section">
-    <h3>💭 讨论主题</h3>
+    <h3>💭 Think</h3>
     <textarea 
       v-model="discussionTopic"
       class="topic-input" 
@@ -189,58 +189,65 @@ if (!discussionTopic.value) {
 
 <style scoped>
 .topic-input-section {
-  background: var(--secondary-black);
+  background: rgba(184, 168, 208, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 40px;
   margin-bottom: 40px;
-  border: 1px solid var(--tertiary-black);
+  border: 2px solid var(--ui-border-light);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .topic-input-section h3 {
   font-size: 1.3em;
   margin-bottom: 20px;
-  color: var(--primary-white);
-  font-weight: 400;
+  color: var(--ui-text-primary);
+  font-weight: 500;
 }
 
 .topic-input {
   width: 100%;
   min-height: 120px;
   padding: 20px;
-  background: var(--tertiary-black);
-  border: 1px solid var(--accent-gray);
+  background: rgba(168, 152, 192, 0.7);
+  backdrop-filter: blur(8px);
+  border: 2px solid var(--ui-border-light);
   border-radius: 8px;
-  color: var(--primary-white);
+  color: var(--ui-text-primary);
   font-size: 1em;
   font-family: inherit;
   resize: vertical;
   transition: all 0.3s ease;
   line-height: 1.6;
+  box-shadow: var(--ui-shadow-inset);
 }
 
 .topic-input:focus {
   outline: none;
-  border-color: var(--success-green);
-  background: var(--secondary-black);
-  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.1);
+  border-color: var(--ui-border-accent);
+  background: rgba(184, 168, 208, 0.8);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 0 2px rgba(104, 88, 168, 0.2);
 }
 
 .topic-input::placeholder {
-  color: var(--accent-gray);
+  color: var(--ui-text-secondary);
   font-style: italic;
 }
 
 .conversation-status {
   margin: 15px 0;
   padding: 12px 16px;
-  background: var(--tertiary-black);
-  border: 1px solid var(--accent-gray);
+  background: rgba(168, 152, 192, 0.6);
+  backdrop-filter: blur(8px);
+  border: 2px solid var(--ui-border-light);
   border-radius: 8px;
   text-align: center;
+  box-shadow: var(--ui-shadow-light);
 }
 
 .chat-info {
-  color: var(--primary-white);
+  color: var(--ui-text-primary);
   font-size: 0.9em;
 }
 
@@ -261,18 +268,20 @@ if (!discussionTopic.value) {
 .start-discussion-btn {
   padding: 16px 32px;
   background: var(--success-green);
-  color: var(--primary-black);
+  color: #000000;
   border: none;
   border-radius: 8px;
   font-size: 1.1em;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 160px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .start-discussion-btn:hover:not(:disabled) {
   background: var(--warning-yellow);
+  color: #000000;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
 }
@@ -282,25 +291,27 @@ if (!discussionTopic.value) {
   cursor: not-allowed;
   transform: none;
   background: var(--tertiary-black);
-  color: var(--accent-gray);
+  color: var(--ui-text-white);
 }
 
 /* 继续对话按钮 */
 .continue-discussion-btn {
   padding: 16px 32px;
   background: var(--warning-yellow);
-  color: var(--primary-black);
+  color: #000000;
   border: none;
   border-radius: 8px;
   font-size: 1.1em;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 160px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .continue-discussion-btn:hover:not(:disabled) {
   background: #ffd93d;
+  color: #000000;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
 }
@@ -310,25 +321,27 @@ if (!discussionTopic.value) {
   cursor: not-allowed;
   transform: none;
   background: var(--tertiary-black);
-  color: var(--accent-gray);
+  color: var(--ui-text-white);
 }
 
 /* 新对话按钮 */
 .new-discussion-btn {
   padding: 16px 32px;
   background: var(--success-green);
-  color: var(--primary-black);
+  color: #000000;
   border: none;
   border-radius: 8px;
   font-size: 1.1em;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 160px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .new-discussion-btn:hover:not(:disabled) {
   background: #00ff99;
+  color: #000000;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
 }
@@ -338,27 +351,28 @@ if (!discussionTopic.value) {
   cursor: not-allowed;
   transform: none;
   background: var(--tertiary-black);
-  color: var(--accent-gray);
+  color: var(--ui-text-white);
 }
 
 /* 重置按钮 */
 .reset-btn {
   padding: 12px 20px;
   background: var(--tertiary-black);
-  color: var(--accent-gray);
-  border: 1px solid var(--accent-gray);
+  color: var(--ui-text-white);
+  border: 1px solid var(--ui-text-white);
   border-radius: 8px;
   font-size: 0.9em;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 100px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .reset-btn:hover {
   background: var(--secondary-black);
-  color: var(--primary-white);
-  border-color: var(--primary-white);
+  color: var(--ui-text-white);
+  border-color: var(--ui-text-white);
   transform: translateY(-1px);
 }
 

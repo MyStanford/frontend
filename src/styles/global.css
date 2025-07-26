@@ -6,35 +6,89 @@
 }
 
 :root {
-    --primary-black: #000000;
-    --secondary-black: #1a1a1a;
-    --tertiary-black: #2d2d2d;
-    --primary-white: #ffffff;
-    --secondary-white: #f8f8f8;
-    --tertiary-white: #e5e5e5;
-    --accent-gray: #666666;
-    --light-gray: #cccccc;
-    --success-green: #00ff88;
-    --warning-yellow: #ffed4e;
+    /* 游戏UI主题色彩 - 基于图片风格 */
+    --ui-bg-primary: #c8b8e0;
+    /* 主背景 - 淡紫色 */
+    --ui-bg-secondary: #b8a8d0;
+    /* 次级背景 */
+    --ui-bg-tertiary: #a898c0;
+    /* 第三级背景 */
+    --ui-border-light: #9888b0;
+    /* 浅色边框 */
+    --ui-border-dark: #887898;
+    /* 深色边框 */
+    --ui-border-accent: #6858a8;
+    /* 强调边框 */
 
-    /* Game Card Theme Colors */
-    --card-bg: #d4d4d8;
-    --card-border: #525252;
-    --card-header: #a1a1aa;
-    --card-blue: #3b82f6;
-    --card-blue-dark: #1e40af;
-    --card-orange: #ea580c;
-    --card-yellow: #fbbf24;
-    --game-purple: #8b5cf6;
-    --game-purple-light: #a78bfa;
+    /* 文字颜色 */
+    --ui-text-primary: #2d2d4d;
+    /* 主要文字 */
+    --ui-text-secondary: #4d4d6d;
+    /* 次要文字 */
+    --ui-text-accent: #1e3a8a;
+    /* 强调文字 - 深蓝 */
+    --ui-text-light: #8888aa;
+    /* 浅色文字 */
+    --ui-text-white: #ffffff;
+    /* 白色文字 */
+
+    /* 按钮和交互元素 */
+    --ui-button-bg: #9888b8;
+    /* 按钮背景 */
+    --ui-button-hover: #8878a8;
+    /* 按钮悬停 */
+    --ui-button-active: #7868a0;
+    /* 按钮激活 */
+    --ui-button-text: #ffffff;
+    /* 按钮文字 */
+
+    /* 状态颜色 */
+    --ui-success: #4ade80;
+    /* 成功绿色 */
+    --ui-warning: #fbbf24;
+    /* 警告黄色 */
+    --ui-error: #f87171;
+    /* 错误红色 */
+    --ui-info: #60a5fa;
+    /* 信息蓝色 */
+
+    /* 阴影和效果 */
+    --ui-shadow-light: 0 2px 4px rgba(72, 64, 128, 0.1);
+    --ui-shadow-medium: 0 4px 8px rgba(72, 64, 128, 0.15);
+    --ui-shadow-heavy: 0 6px 12px rgba(72, 64, 128, 0.2);
+    --ui-shadow-inset: inset 0 2px 4px rgba(72, 64, 128, 0.1);
+
+    /* 兼容旧变量 */
+    --primary-black: var(--ui-text-primary);
+    --secondary-black: var(--ui-text-secondary);
+    --tertiary-black: var(--ui-text-light);
+    --primary-white: var(--ui-text-white);
+    --secondary-white: var(--ui-bg-primary);
+    --tertiary-white: var(--ui-bg-secondary);
+    --accent-gray: var(--ui-text-light);
+    --light-gray: var(--ui-text-secondary);
+    --success-green: var(--ui-success);
+    --warning-yellow: var(--ui-warning);
+
+    /* 更新游戏卡片颜色 */
+    --card-bg: var(--ui-bg-primary);
+    --card-border: var(--ui-border-dark);
+    --card-header: var(--ui-bg-secondary);
+    --card-blue: var(--ui-info);
+    --card-blue-dark: var(--ui-text-accent);
+    --card-orange: #f97316;
+    --card-yellow: var(--ui-warning);
+    --game-purple: var(--ui-button-bg);
+    --game-purple-light: var(--ui-bg-tertiary);
 }
 
 body {
     font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--primary-black) url('/back.png') center center / cover no-repeat fixed;
-    color: var(--primary-white);
+    background: url('/back.png') center center / cover no-repeat fixed;
+    color: var(--ui-text-primary);
     line-height: 1.6;
-    font-weight: 300;
+    font-weight: 400;
+    min-height: 100vh;
 }
 
 .app-container {
@@ -55,166 +109,170 @@ body {
     padding: 0 40px;
 }
 
-/* 游戏卡牌风格按钮 */
+/* 游戏UI风格按钮 */
 .btn-primary {
-    padding: 12px 24px;
-    background: var(--card-bg);
-    color: #1f2937;
-    border: 3px solid var(--card-border);
-    border-radius: 8px;
-    font-size: 1em;
+    padding: 10px 20px;
+    background: var(--ui-bg-primary);
+    color: #000000;
+    border: 2px solid var(--ui-border-dark);
+    border-radius: 6px;
+    font-size: 0.95em;
     font-weight: 600;
-    font-family: serif;
+    font-family: inherit;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    box-shadow: var(--ui-shadow-medium);
     position: relative;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-    background: #e4e4e7;
+    background: var(--ui-bg-secondary);
+    color: #000000;
+    border-color: var(--ui-border-accent);
+    box-shadow: var(--ui-shadow-heavy);
+    transform: translateY(-1px);
 }
 
 .btn-primary:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--ui-shadow-light);
+    background: var(--ui-bg-tertiary);
 }
 
 .btn-primary:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--ui-shadow-light);
 }
 
 .btn-secondary {
-    padding: 12px 24px;
-    background: var(--card-yellow);
-    color: #1f2937;
-    border: 3px solid var(--card-border);
-    border-radius: 8px;
-    font-size: 1em;
+    padding: 10px 20px;
+    background: var(--ui-button-bg);
+    color: var(--ui-button-text);
+    border: 2px solid var(--ui-border-dark);
+    border-radius: 6px;
+    font-size: 0.95em;
     font-weight: 600;
-    font-family: serif;
+    font-family: inherit;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    box-shadow: var(--ui-shadow-medium);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .btn-secondary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-    background: #fcd34d;
+    background: var(--ui-button-hover);
+    border-color: var(--ui-border-accent);
+    box-shadow: var(--ui-shadow-heavy);
+    transform: translateY(-1px);
 }
 
-/* 游戏卡牌容器样式 */
+/* 游戏UI卡片容器样式 */
 .game-card {
-    background: var(--card-bg);
-    border: 4px solid var(--card-border);
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    font-family: serif;
+    background: rgba(200, 184, 224, 0.9);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--ui-border-dark);
+    border-radius: 8px;
+    box-shadow: var(--ui-shadow-medium);
+    font-family: inherit;
     position: relative;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .game-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--ui-shadow-heavy);
+    border-color: var(--ui-border-accent);
 }
 
 .game-card-header {
-    background: var(--card-header);
-    border-bottom: 2px solid var(--card-border);
+    background: var(--ui-bg-secondary);
+    border-bottom: 1px solid var(--ui-border-dark);
     padding: 12px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-weight: bold;
-    color: #1f2937;
+    font-weight: 500;
+    color: var(--ui-text-primary);
+    border-radius: 6px 6px 0 0;
 }
 
 .game-card-content {
-    padding: 20px;
+    padding: 16px;
+    color: var(--ui-text-primary);
 }
 
 .game-card-blue {
-    background: linear-gradient(135deg, var(--card-blue), var(--card-blue-dark));
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, var(--ui-info), var(--ui-text-accent));
+    color: var(--ui-text-white);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .game-card-footer {
-    background: var(--card-yellow);
-    height: 20px;
-    margin: 0 8px 8px;
-    border-radius: 0 0 8px 8px;
+    background: var(--ui-bg-secondary);
+    height: 16px;
+    margin: 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    border-top: 1px solid var(--ui-border-light);
 }
 
-/* 游戏窗口样式 */
+/* 游戏UI窗口样式 */
 .game-window {
-    background: var(--card-bg);
-    border: 4px solid var(--card-border);
-    border-radius: 16px;
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    background: rgba(200, 184, 224, 0.95);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--ui-border-dark);
+    border-radius: 10px;
+    box-shadow: var(--ui-shadow-heavy);
     overflow: hidden;
-    font-family: serif;
+    font-family: inherit;
 }
 
 .game-window-header {
-    background: var(--card-header);
-    border-bottom: 3px solid var(--card-border);
-    padding: 16px 20px;
+    background: var(--ui-bg-secondary);
+    border-bottom: 2px solid var(--ui-border-dark);
+    padding: 14px 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .game-window-title {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #1f2937;
+    font-size: 1.2em;
+    font-weight: 500;
+    color: var(--ui-text-primary);
 }
 
 .game-window-controls {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 .game-window-btn {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--card-border);
-    border-radius: 50%;
-    background: var(--card-bg);
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--ui-border-dark);
+    border-radius: 3px;
+    background: var(--ui-bg-primary);
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: var(--ui-shadow-light);
 }
 
 .game-window-btn:hover {
-    background: #e4e4e7;
-    transform: scale(1.1);
+    background: var(--ui-bg-tertiary);
+    border-color: var(--ui-border-accent);
+    transform: scale(1.05);
 }
 
-.btn-secondary {
-    padding: 16px 32px;
-    background: transparent;
-    color: var(--primary-white);
-    border: 2px solid var(--accent-gray);
-    border-radius: 8px;
-    font-size: 1.1em;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
 
-.btn-secondary:hover {
-    background: var(--primary-white);
-    color: var(--primary-black);
-    border-color: var(--primary-white);
-}
 
 /* 加载状态 */
 .loading {
@@ -226,47 +284,54 @@ body {
 
 /* 错误和成功消息 */
 .error-message {
-    background: var(--secondary-black);
-    color: #ff6b6b;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-    border-left: 3px solid #ff6b6b;
+    background: rgba(200, 184, 224, 0.9);
+    backdrop-filter: blur(15px);
+    color: var(--ui-error);
+    padding: 16px;
+    border-radius: 6px;
+    margin: 16px 0;
+    border: 2px solid var(--ui-error);
+    box-shadow: var(--ui-shadow-light);
 }
 
 .success-message {
-    background: var(--secondary-black);
-    color: var(--success-green);
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-    border-left: 3px solid var(--success-green);
+    background: rgba(200, 184, 224, 0.9);
+    backdrop-filter: blur(15px);
+    color: var(--ui-success);
+    padding: 16px;
+    border-radius: 6px;
+    margin: 16px 0;
+    border: 2px solid var(--ui-success);
+    box-shadow: var(--ui-shadow-light);
 }
 
-/* 通知样式 */
+/* 游戏UI通知样式 */
 .notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 16px 20px;
-    border-radius: 8px;
+    padding: 14px 18px;
+    border-radius: 6px;
     z-index: 10000;
-    min-width: 300px;
-    max-width: 400px;
+    min-width: 280px;
+    max-width: 380px;
     animation: slideInRight 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--ui-shadow-heavy);
+    border: 2px solid;
 }
 
 .notification.success {
-    background: var(--secondary-black);
-    border: 1px solid var(--success-green);
-    color: var(--success-green);
+    background: rgba(200, 184, 224, 0.95);
+    backdrop-filter: blur(20px);
+    border-color: var(--ui-success);
+    color: var(--ui-success);
 }
 
 .notification.error {
-    background: var(--secondary-black);
-    border: 1px solid #ff6b6b;
-    color: #ff6b6b;
+    background: rgba(200, 184, 224, 0.95);
+    backdrop-filter: blur(20px);
+    border-color: var(--ui-error);
+    color: var(--ui-error);
 }
 
 @keyframes slideInRight {
@@ -281,16 +346,16 @@ body {
     }
 }
 
-/* 表单样式 */
+/* 游戏UI表单样式 */
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 400;
-    color: var(--accent-gray);
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--ui-text-primary);
     font-size: 0.9em;
 }
 
@@ -298,46 +363,52 @@ body {
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 14px;
-    background: var(--tertiary-black);
-    border: 1px solid var(--accent-gray);
+    padding: 12px;
+    background: rgba(200, 184, 224, 0.8);
+    backdrop-filter: blur(8px);
+    border: 2px solid var(--ui-border-light);
     border-radius: 6px;
-    color: var(--primary-white);
-    font-size: 1em;
-    transition: all 0.3s ease;
+    color: var(--ui-text-primary);
+    font-size: 0.95em;
+    transition: all 0.2s ease;
     font-family: inherit;
     resize: vertical;
+    box-shadow: var(--ui-shadow-inset);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--success-green);
-    background: var(--secondary-black);
+    border-color: var(--ui-border-accent);
+    background: rgba(184, 168, 208, 0.9);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--ui-shadow-light);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: var(--accent-gray);
+    color: var(--ui-text-light);
 }
 
-/* 滚动条样式 */
+/* 游戏UI滚动条样式 */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--secondary-black);
+    background: var(--ui-bg-secondary);
+    border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--accent-gray);
-    border-radius: 4px;
+    background: var(--ui-border-dark);
+    border-radius: 3px;
+    border: 1px solid var(--ui-border-light);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-white);
+    background: var(--ui-border-accent);
 }
 
 /* 动画效果 */

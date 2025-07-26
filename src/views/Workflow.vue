@@ -53,22 +53,27 @@ onMounted(async () => {
 
 <style scoped>
 .workflow-page {
-  padding: 40px 20px;
-  background: linear-gradient(135deg, var(--game-purple), var(--game-purple-light));
+  padding: 30px 20px;
   min-height: calc(100vh - 80px);
 }
 
 .workflow-section {
   max-width: 1200px;
   margin: 0 auto;
+  background: rgba(200, 184, 224, 0.9);
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--ui-border-dark);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--ui-shadow-heavy);
 }
 
 .discussion-insights-area {
   display: grid;
   grid-template-columns: 1fr 400px;
-  gap: 30px;
-  margin-bottom: 40px;
-  align-items: start;
+  gap: 20px;
+  margin-bottom: 30px;
+  align-items: stretch;
 }
 
 /* 响应式设计 */
@@ -77,15 +82,25 @@ onMounted(async () => {
     padding: 20px 15px;
   }
   
+  .workflow-section {
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
   .discussion-insights-area {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 15px;
   }
 }
 
 @media (max-width: 768px) {
   .workflow-page {
     padding: 15px 10px;
+  }
+  
+  .workflow-section {
+    padding: 12px;
+    border-radius: 8px;
   }
 }
 </style> 

@@ -205,9 +205,10 @@ const startWorkflow = () => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background: linear-gradient(135deg, rgba(196, 181, 253, 0.95), rgba(221, 214, 254, 0.95));
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(161, 130, 253, 0.3);
+  background: rgba(200, 184, 224, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--ui-border-dark);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .header-content {
@@ -219,8 +220,8 @@ const startWorkflow = () => {
 
 .logo {
   font-size: 1.8em;
-  font-weight: 700;
-  color: #2d2d2d;
+  font-weight: 600;
+  color: var(--ui-text-primary);
   letter-spacing: -0.5px;
 }
 
@@ -241,54 +242,65 @@ const startWorkflow = () => {
 
 .icon-link {
   text-decoration: none;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: var(--ui-bg-secondary);
+  border: 1px solid var(--ui-border-light);
+  box-shadow: var(--ui-shadow-light);
 }
 
 .icon-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px) scale(1.1);
+  background: var(--ui-bg-tertiary);
+  border-color: var(--ui-border-accent);
+  transform: translateY(-1px);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .icon-link.router-link-active {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  background: var(--ui-button-bg);
+  border-color: var(--ui-border-accent);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .wallet-link-btn {
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2d2d2d;
-  border: none;
+  background: var(--ui-bg-secondary);
+  color: var(--ui-text-primary);
+  border: 2px solid var(--ui-border-light);
   border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   font-size: 0.9em;
   white-space: nowrap;
+  box-shadow: var(--ui-shadow-light);
 }
 
 .wallet-link-btn:hover {
-  background: rgba(255, 255, 255, 1);
+  background: var(--ui-bg-tertiary);
+  border-color: var(--ui-border-accent);
   transform: translateY(-1px);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .start-btn {
   padding: 8px 20px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2d2d2d;
-  border: none;
+  background: var(--ui-button-bg);
+  color: var(--ui-button-text);
+  border: 2px solid var(--ui-border-dark);
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   font-size: 0.9em;
+  box-shadow: var(--ui-shadow-light);
 }
 
 .start-btn:hover {
-  background: rgba(255, 255, 255, 1);
+  background: var(--ui-button-hover);
+  border-color: var(--ui-border-accent);
   transform: translateY(-1px);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .wallet-link-btn:disabled,

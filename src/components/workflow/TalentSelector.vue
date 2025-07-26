@@ -60,7 +60,9 @@
         @mouseenter="showHoverCard(expert, $event)"
         @mouseleave="hideHoverCard"
       >
-        <div class="talent-avatar">{{ expert.avatar }}</div>
+        <div class="talent-avatar">
+          <span class="talent-emoji">{{ expert.avatar }}</span>
+        </div>
         <div class="talent-name">{{ expert.name }}</div>
         <div class="talent-role">{{ expert.role }}</div>
       </div>
@@ -93,8 +95,17 @@
       
       <!-- 主图片区域 -->
       <div class="card-image-area">
-        <div class="talent-avatar">{{ hoverCard.expert.avatar }}</div>
-        <div class="talent-title">{{ hoverCard.expert.role }}</div>
+        <img 
+          v-if="hasPersonImage(hoverCard.expert.name)" 
+          :src="`/person/${hoverCard.expert.name}.png`" 
+          :alt="hoverCard.expert.name"
+          class="talent-image-full"
+          @error="handleImageError"
+        />
+        <div v-else class="talent-avatar-fallback">
+          <span class="talent-emoji">{{ hoverCard.expert.avatar }}</span>
+        </div>
+        <div class="talent-title-overlay">{{ hoverCard.expert.role }}</div>
       </div>
       
       <!-- 描述区域 -->
@@ -152,6 +163,9 @@ const hoverCard = ref({
   style: {},
   timer: null
 })
+
+// 图片存在状态
+const imageExists = ref(new Set())
 
 // 计算属性
 const allTalents = computed(() => store.state.allTalents)
@@ -268,6 +282,29 @@ const retryLoadTalents = async () => {
   }
 }
 
+// 检查图片是否存在的方法
+const hasPersonImage = (name) => {
+  return imageExists.value.has(name)
+}
+
+const checkImageExists = async (name) => {
+  try {
+    const response = await fetch(`/person/${name}.png`, { method: 'HEAD' })
+    if (response.ok) {
+      imageExists.value.add(name)
+    }
+  } catch (error) {
+    // 图片不存在，不做任何操作
+  }
+}
+
+const handleImageError = (event) => {
+  // 图片加载失败时，从存在列表中移除
+  const imgSrc = event.target.src
+  const name = imgSrc.split('/').pop().replace('.png', '')
+  imageExists.value.delete(name)
+}
+
 // 悬停卡片方法
 const showHoverCard = (expert, event) => {
   // 清除可能存在的隐藏定时器
@@ -364,9 +401,16 @@ const initializeSlotIcons = () => {
 watch(
   () => allTalents.value,
   (newTalents) => {
-    if (newTalents.length > 0 && slotReels.value[0].icon === '🎭') {
+    if (newTalents.length > 0) {
       // 如果专家数据刚加载完成且老虎机还是默认图标，则更新
-      initializeSlotIcons()
+      if (slotReels.value[0].icon === '🎭') {
+        initializeSlotIcons()
+      }
+      
+      // 检查所有专家的图片是否存在
+      newTalents.forEach(expert => {
+        checkImageExists(expert.name)
+      })
     }
   },
   { immediate: false }
@@ -375,6 +419,13 @@ watch(
 onMounted(() => {
   // 初始化老虎机图标
   initializeSlotIcons()
+  
+  // 检查已有专家的图片
+  if (allTalents.value.length > 0) {
+    allTalents.value.forEach(expert => {
+      checkImageExists(expert.name)
+    })
+  }
 })
 
 onUnmounted(() => {
@@ -435,11 +486,13 @@ onUnmounted(() => {
   display: none;
   margin-bottom: 20px;
   padding: 15px;
-  background: var(--secondary-black);
+  background: rgba(184, 168, 208, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 8px;
-  border: 1px solid var(--accent-gray);
+  border: 2px solid var(--ui-border-light);
   text-align: center;
   animation: slideDown 0.3s ease;
+  box-shadow: var(--ui-shadow-light);
 }
 
 .slot-machine-section.show {
@@ -458,7 +511,7 @@ onUnmounted(() => {
 }
 
 .slot-machine-section h4 {
-  color: var(--primary-white);
+  color: var(--ui-text-primary);
   margin-bottom: 15px;
   font-size: 1.1em;
 }
@@ -468,23 +521,26 @@ onUnmounted(() => {
   justify-content: center;
   gap: 8px;
   margin-bottom: 15px;
-  background: var(--primary-black);
+  background: rgba(200, 184, 224, 0.7);
+  backdrop-filter: blur(8px);
   padding: 10px;
   border-radius: 6px;
-  border: 2px solid var(--warning-yellow);
+  border: 2px solid var(--ui-warning);
+  box-shadow: var(--ui-shadow-inset);
 }
 
 .slot-reel {
   width: 50px;
   height: 50px;
-  background: var(--secondary-black);
+  background: var(--ui-bg-secondary);
   border-radius: 6px;
-  border: 1px solid var(--accent-gray);
+  border: 2px solid var(--ui-border-light);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  box-shadow: var(--ui-shadow-inset);
 }
 
 .slot-reel.spinning {
@@ -510,25 +566,31 @@ onUnmounted(() => {
 
 .slot-spin-btn {
   padding: 10px 20px;
-  background: var(--success-green);
-  color: var(--primary-black);
-  border: none;
+  background: var(--ui-success);
+  color: #000000;
+  border: 2px solid var(--ui-border-dark);
   border-radius: 6px;
   font-size: 0.9em;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: var(--ui-shadow-light);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .slot-spin-btn:hover {
-  background: var(--warning-yellow);
+  background: var(--ui-warning);
+  color: #000000;
+  border-color: var(--ui-border-accent);
   transform: translateY(-1px);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .slot-spin-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: var(--ui-shadow-light);
 }
 
 .slot-result {
@@ -578,41 +640,65 @@ onUnmounted(() => {
 }
 
 .talent-card {
-  background: var(--tertiary-black);
-  border: 2px solid transparent;
+  background: rgba(184, 168, 208, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--ui-border-light);
   border-radius: 8px;
   padding: 15px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-align: center;
+  box-shadow: var(--ui-shadow-light);
 }
 
 .talent-card:hover {
-  background: var(--secondary-black);
-  border-color: var(--accent-gray);
+  background: rgba(200, 184, 224, 0.9);
+  backdrop-filter: blur(15px);
+  border-color: var(--ui-border-accent);
   transform: translateY(-2px);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .talent-card.selected {
-  background: var(--secondary-black);
-  border-color: var(--success-green);
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+  background: rgba(200, 184, 224, 0.95);
+  backdrop-filter: blur(15px);
+  border-color: var(--ui-success);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
 }
 
 .talent-avatar {
   font-size: 2em;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.talent-emoji {
+  font-size: 1em;
+  display: block;
+}
+
+/* 只用于悬浮卡片的图片样式 */
+.hover-card .talent-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 3px solid var(--ui-text-white);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
 }
 
 .talent-name {
   font-weight: 600;
-  color: var(--primary-white);
+  color: var(--ui-text-primary);
   font-size: 1.1em;
   margin-bottom: 5px;
 }
 
 .talent-role {
-  color: var(--accent-gray);
+  color: var(--ui-text-secondary);
   font-size: 0.9em;
 }
 
@@ -622,7 +708,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 15px 0;
-  border-top: 1px solid var(--tertiary-black);
+  border-top: 2px solid var(--ui-border-light);
   margin-top: 20px;
 }
 
@@ -633,24 +719,31 @@ onUnmounted(() => {
 
 .choose-btn {
   padding: 10px 20px;
-  background: var(--success-green);
-  color: var(--primary-black);
-  border: none;
+  background: var(--ui-success);
+  color: #000000;
+  border: 2px solid var(--ui-border-dark);
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--ui-shadow-light);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .choose-btn:hover:not(:disabled) {
-  background: var(--warning-yellow);
+  background: var(--ui-warning);
+  color: #000000;
+  border-color: var(--ui-border-accent);
   transform: translateY(-1px);
+  box-shadow: var(--ui-shadow-medium);
 }
 
 .choose-btn:disabled {
-  background: var(--tertiary-black);
-  color: var(--accent-gray);
+  background: var(--ui-bg-tertiary);
+  color: var(--ui-text-white);
+  border-color: var(--ui-border-light);
   cursor: not-allowed;
+  box-shadow: var(--ui-shadow-light);
 }
 
 /* 加载状态和空状态样式 */
@@ -676,7 +769,7 @@ onUnmounted(() => {
 }
 
 .loading-text {
-  color: var(--accent-gray);
+  color: var(--ui-text-light);
   font-size: 0.9em;
 }
 
@@ -684,44 +777,52 @@ onUnmounted(() => {
   font-size: 3em;
   margin-bottom: 15px;
   opacity: 0.5;
+  color: var(--ui-text-light);
 }
 
 .empty-text {
-  color: var(--accent-gray);
+  color: var(--ui-text-light);
   margin-bottom: 20px;
   font-size: 0.9em;
 }
 
 .retry-btn {
   padding: 8px 16px;
-  background: var(--success-green);
-  color: var(--primary-black);
-  border: none;
-  border-radius: 4px;
+  background: var(--ui-success);
+  color: #000000;
+  border: 2px solid var(--ui-border-dark);
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.85em;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--ui-shadow-light);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .retry-btn:hover {
-  background: var(--warning-yellow);
+  background: var(--ui-warning);
+  color: #000000;
+  border-color: var(--ui-border-accent);
   transform: translateY(-1px);
+  box-shadow: var(--ui-shadow-medium);
 }
 
-/* 悬停卡片样式 - 游戏卡牌风格 */
+/* 悬停卡片样式 - 游戏UI风格 */
 .hover-card {
   width: 240px;
   height: 340px;
-  background: #d4d4d8;
-  border: 4px solid #525252;
-  border-radius: 12px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+  background: rgba(200, 184, 224, 0.95);
+  backdrop-filter: blur(20px);
+  border: 3px solid var(--ui-border-dark);
+  border-radius: 10px;
+  box-shadow: var(--ui-shadow-heavy);
   animation: hoverCardAppear 0.3s ease-out;
   pointer-events: auto;
   cursor: default;
   display: flex;
   flex-direction: column;
-  font-family: serif;
+  font-family: inherit;
   position: relative;
 }
 
@@ -736,29 +837,30 @@ onUnmounted(() => {
   }
 }
 
-/* 卡牌顶部标题栏 */
+/* 卡片顶部标题栏 */
 .hover-card .card-header {
-  background: #a1a1aa;
+  background: var(--ui-bg-secondary);
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
-  border-bottom: 2px solid #525252;
+  border-bottom: 2px solid var(--ui-border-dark);
+  border-radius: 7px 7px 0 0;
 }
 
 .hover-card .header-circle {
   width: 18px;
   height: 18px;
-  border: 2px solid #525252;
+  border: 2px solid var(--ui-border-dark);
   border-radius: 50%;
-  background: #d4d4d8;
+  background: var(--ui-bg-primary);
 }
 
 .hover-card .header-title {
   font-size: 14px;
-  font-weight: bold;
-  color: #1f2937;
+  font-weight: 500;
+  color: var(--ui-text-primary);
   text-align: center;
   flex: 1;
 }
@@ -766,14 +868,15 @@ onUnmounted(() => {
 .hover-card .header-plus {
   width: 18px;
   height: 18px;
-  background: #d4d4d8;
-  border: 2px solid #525252;
+  background: var(--ui-bg-primary);
+  border: 2px solid var(--ui-border-dark);
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  font-weight: bold;
-  color: #1f2937;
+  font-weight: 500;
+  color: var(--ui-text-primary);
 }
 
 /* 名称输入框 */
@@ -786,61 +889,92 @@ onUnmounted(() => {
 
 .hover-card .name-label {
   font-size: 12px;
-  font-weight: bold;
-  color: #1f2937;
+  font-weight: 500;
+  color: var(--ui-text-primary);
 }
 
 .hover-card .name-input {
   flex: 1;
   height: 22px;
-  background: white;
-  border: 1px solid #6b7280;
+  background: var(--ui-text-white);
+  border: 1px solid var(--ui-border-light);
   border-radius: 3px;
   padding: 3px 6px;
   font-size: 11px;
-  color: #1f2937;
+  color: var(--ui-text-primary);
   display: flex;
   align-items: center;
+  box-shadow: var(--ui-shadow-inset);
 }
 
 /* 主图片区域 */
 .hover-card .card-image-area {
   flex: 1;
-  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  background: linear-gradient(135deg, var(--ui-info), var(--ui-text-accent));
   margin: 0 8px;
   border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
   min-height: 150px;
+  box-shadow: var(--ui-shadow-inset);
+  overflow: hidden;
 }
 
-.hover-card .talent-avatar {
+/* 占满整个蓝色区域的图片 */
+.hover-card .talent-image-full {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 6px;
+}
+
+/* 没有图片时的fallback */
+.hover-card .talent-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 4em;
-  margin-bottom: 10px;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
 }
 
-.hover-card .talent-title {
-  color: white;
+
+
+.hover-card .talent-emoji {
+  font-size: 1em;
+  display: block;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+}
+
+/* 叠加在图片上的标题 */
+.hover-card .talent-title-overlay {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  color: var(--ui-text-white);
   font-size: 16px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  font-weight: 500;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
   text-align: center;
-  padding: 0 10px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 /* 描述区域 */
 .hover-card .card-description {
-  background: #ea580c;
+  background: var(--card-orange);
   margin: 8px;
   border-radius: 6px;
   padding: 10px;
   height: 50px;
   display: flex;
   align-items: center;
+  box-shadow: var(--ui-shadow-inset);
 }
 
 .hover-card .description-lines {
@@ -852,20 +986,22 @@ onUnmounted(() => {
 
 .hover-card .desc-line {
   height: 4px;
-  background: #9ca3af;
+  background: var(--ui-text-light);
   border-radius: 2px;
+  opacity: 0.7;
 }
 
 .hover-card .desc-line.long { width: 100%; }
 .hover-card .desc-line.medium { width: 75%; }
 .hover-card .desc-line.short { width: 50%; }
 
-/* 底部黄色区域 */
+/* 底部区域 */
 .hover-card .card-footer {
-  background: #fbbf24;
+  background: var(--ui-warning);
   height: 20px;
   margin: 0 8px 8px;
   border-radius: 0 0 6px 6px;
+  box-shadow: var(--ui-shadow-inset);
 }
 
 
@@ -930,11 +1066,11 @@ onUnmounted(() => {
     font-size: 9px;
   }
   
-  .hover-card .talent-avatar {
+  .hover-card .talent-avatar-fallback {
     font-size: 3em;
   }
   
-  .hover-card .talent-title {
+  .hover-card .talent-title-overlay {
     font-size: 14px;
   }
   

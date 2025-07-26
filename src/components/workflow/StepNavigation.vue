@@ -80,17 +80,21 @@ const goToStep = (stepId) => {
   transition: all 0.3s ease;
   position: relative;
   background: var(--tertiary-black);
-  color: var(--accent-gray);
+  color: var(--ui-text-white);
 }
 
 .step-item.active {
   background: var(--success-green);
-  color: var(--primary-black);
+  color: #000000;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .step-item.completed {
   background: var(--warning-yellow);
-  color: var(--primary-black);
+  color: #000000;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
   cursor: pointer;
 }
 

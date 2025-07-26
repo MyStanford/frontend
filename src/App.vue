@@ -76,7 +76,7 @@ onMounted(async () => {
 })
 </script>
 
-<template>
+<template> 
   <div id="app" class="app-container">
     <!-- 应用头部 -->
     <AppHeader />
