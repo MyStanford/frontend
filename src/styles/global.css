@@ -1,0 +1,386 @@
+/* 全局CSS变量和样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-black: #000000;
+    --secondary-black: #1a1a1a;
+    --tertiary-black: #2d2d2d;
+    --primary-white: #ffffff;
+    --secondary-white: #f8f8f8;
+    --tertiary-white: #e5e5e5;
+    --accent-gray: #666666;
+    --light-gray: #cccccc;
+    --success-green: #00ff88;
+    --warning-yellow: #ffed4e;
+
+    /* Game Card Theme Colors */
+    --card-bg: #d4d4d8;
+    --card-border: #525252;
+    --card-header: #a1a1aa;
+    --card-blue: #3b82f6;
+    --card-blue-dark: #1e40af;
+    --card-orange: #ea580c;
+    --card-yellow: #fbbf24;
+    --game-purple: #8b5cf6;
+    --game-purple-light: #a78bfa;
+}
+
+body {
+    font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--primary-black) url('/back.png') center center / cover no-repeat fixed;
+    color: var(--primary-white);
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    margin-top: 80px;
+    /* 为固定头部留出空间 */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+/* 游戏卡牌风格按钮 */
+.btn-primary {
+    padding: 12px 24px;
+    background: var(--card-bg);
+    color: #1f2937;
+    border: 3px solid var(--card-border);
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    font-family: serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    background: #e4e4e7;
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    padding: 12px 24px;
+    background: var(--card-yellow);
+    color: #1f2937;
+    border: 3px solid var(--card-border);
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    font-family: serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    background: #fcd34d;
+}
+
+/* 游戏卡牌容器样式 */
+.game-card {
+    background: var(--card-bg);
+    border: 4px solid var(--card-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    font-family: serif;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.game-card-header {
+    background: var(--card-header);
+    border-bottom: 2px solid var(--card-border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.game-card-content {
+    padding: 20px;
+}
+
+.game-card-blue {
+    background: linear-gradient(135deg, var(--card-blue), var(--card-blue-dark));
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.game-card-footer {
+    background: var(--card-yellow);
+    height: 20px;
+    margin: 0 8px 8px;
+    border-radius: 0 0 8px 8px;
+}
+
+/* 游戏窗口样式 */
+.game-window {
+    background: var(--card-bg);
+    border: 4px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    font-family: serif;
+}
+
+.game-window-header {
+    background: var(--card-header);
+    border-bottom: 3px solid var(--card-border);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.game-window-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.game-window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.game-window-btn {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--card-border);
+    border-radius: 50%;
+    background: var(--card-bg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.game-window-btn:hover {
+    background: #e4e4e7;
+    transform: scale(1.1);
+}
+
+.btn-secondary {
+    padding: 16px 32px;
+    background: transparent;
+    color: var(--primary-white);
+    border: 2px solid var(--accent-gray);
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-white);
+    color: var(--primary-black);
+    border-color: var(--primary-white);
+}
+
+/* 加载状态 */
+.loading {
+    text-align: center;
+    color: var(--accent-gray);
+    font-style: italic;
+    padding: 60px;
+}
+
+/* 错误和成功消息 */
+.error-message {
+    background: var(--secondary-black);
+    color: #ff6b6b;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 3px solid #ff6b6b;
+}
+
+.success-message {
+    background: var(--secondary-black);
+    color: var(--success-green);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 3px solid var(--success-green);
+}
+
+/* 通知样式 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    z-index: 10000;
+    min-width: 300px;
+    max-width: 400px;
+    animation: slideInRight 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.notification.success {
+    background: var(--secondary-black);
+    border: 1px solid var(--success-green);
+    color: var(--success-green);
+}
+
+.notification.error {
+    background: var(--secondary-black);
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 400;
+    color: var(--accent-gray);
+    font-size: 0.9em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 14px;
+    background: var(--tertiary-black);
+    border: 1px solid var(--accent-gray);
+    border-radius: 6px;
+    color: var(--primary-white);
+    font-size: 1em;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--success-green);
+    background: var(--secondary-black);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--accent-gray);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--secondary-black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-gray);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-white);
+}
+
+/* 动画效果 */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .main-content {
+        margin-top: 70px;
+    }
+}
+
+/* 打印样式 */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+
+    .no-print {
+        display: none;
+    }
+}
