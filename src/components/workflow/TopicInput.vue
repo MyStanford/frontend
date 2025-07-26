@@ -45,15 +45,6 @@
         </button>
       </template>
       
-      <!-- 重置按钮（仅在有对话时显示） -->
-      <button 
-        v-if="currentChatID && !isDiscussing"
-        class="reset-btn"
-        @click="resetConversation"
-        title="重置对话状态"
-      >
-        🔄 重置
-      </button>
     </div>
     
     <!-- 状态提示 -->
